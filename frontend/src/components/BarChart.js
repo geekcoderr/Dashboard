@@ -1,4 +1,3 @@
-// src/components/BarChart.js
 import * as d3 from 'd3';
 import { format } from 'd3-format';
 import React, { useEffect, useRef } from 'react';

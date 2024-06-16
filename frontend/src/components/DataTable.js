@@ -1,4 +1,3 @@
-// src/components/DataTable.js
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import { IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import React from 'react';

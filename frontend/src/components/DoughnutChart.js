@@ -1,4 +1,3 @@
-// src/components/DoughnutChart.js
 import * as d3 from 'd3';
 import React, { useEffect, useRef } from 'react';
 
@@ -47,7 +46,7 @@ const DoughnutChart = ({ data }) => {
 
    g.append("text")
      .attr("text-anchor", "middle")
-     .attr("dy", "-1em") // Move the text above the value
+     .attr("dy", "-1em") 
      .text("Total")
      .style("font-size", "1rem")
      .attr("fill", "black");
@@ -55,7 +54,7 @@ const DoughnutChart = ({ data }) => {
    g.append("text")
      .attr("text-anchor", "middle")
      .attr("dy", "0.35em")
-     .text(`$${total.toFixed(2)}K`) // Add 'K' after the value
+     .text(`$${total.toFixed(2)}K`) 
      .style("font-size", "1.5rem")
      .attr("fill", "black");
  };
