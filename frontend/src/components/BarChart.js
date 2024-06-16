@@ -1,5 +1,6 @@
 // src/components/BarChart.js
 import * as d3 from 'd3';
+import { format } from 'd3-format';
 import React, { useEffect, useRef } from 'react';
 
 const BarChart = ({ data }) => {
@@ -28,6 +29,8 @@ const BarChart = ({ data }) => {
       .domain([0, d3.max(data, d => d.acv)]).nice()
       .range([height - margin.bottom, margin.top]);
 
+    const formatThousands = format(".2s");
+
     const color = d3.scaleOrdinal()
       .domain(['Existing Customer', 'New Customer'])
       .range(['#00bcd4', '#ff9800']);
@@ -38,7 +41,7 @@ const BarChart = ({ data }) => {
 
     svg.append("g")
       .attr("transform", `translate(${margin.left},0)`)
-      .call(d3.axisLeft(y));
+      .call(d3.axisLeft(y).tickFormat(formatThousands));
 
     const barGroups = svg.selectAll(".bar-group")
       .data(data)

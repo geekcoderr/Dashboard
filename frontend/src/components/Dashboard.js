@@ -33,7 +33,7 @@ const Dashboard = () => {
     quarter: d.closed_fiscal_quarter,
     acv: d.acv,
     opps: d.count,
-    percentage: (d.acv / data.customerType.reduce((acc, cur) => acc + cur.acv, 0) * 100).toFixed(2) + '%',
+    percentage: ((d.acv / data.customerType.reduce((acc, cur) => acc + cur.acv, 0)) * 100).toFixed(2) + '%',
     type: d.Cust_Type
   }));
 
