@@ -3,50 +3,69 @@ import * as d3 from 'd3';
 import React, { useEffect, useRef } from 'react';
 
 const BarChart = ({ data }) => {
-  const ref = useRef();
+  const chartRef = useRef(null);
 
   useEffect(() => {
-    const svg = d3.select(ref.current)
-      .attr('width', 800)
-      .attr('height', 400)
-      .style('overflow', 'visible')
-      .style('margin-top', '50px');
+    if (data.length > 0) {
+      drawChart();
+    }
+  }, [data]);
+
+  const drawChart = () => {
+    const svg = d3.select(chartRef.current);
+    svg.selectAll("*").remove();
+
+    const margin = { top: 20, right: 30, bottom: 40, left: 40 };
+    const width = 800 - margin.left - margin.right;
+    const height = 400 - margin.top - margin.bottom;
 
     const x = d3.scaleBand()
       .domain(data.map(d => d.quarter))
-      .range([0, 800])
-      .padding(0.4);
+      .range([margin.left, width - margin.right])
+      .padding(0.1);
 
     const y = d3.scaleLinear()
-      .domain([0, 2400])
-      .range([400, 0]);
+      .domain([0, d3.max(data, d => d.acv)]).nice()
+      .range([height - margin.bottom, margin.top]);
 
-    const xAxis = d3.axisBottom(x);
-    const yAxis = d3.axisLeft(y);
+    const color = d3.scaleOrdinal()
+      .domain(['Existing Customer', 'New Customer'])
+      .range(['#00bcd4', '#ff9800']);
 
-    svg.append('g')
-      .call(xAxis)
-      .attr('transform', 'translate(0, 400)')
-      .selectAll("text")
-      .attr("transform", "translate(-10,10)rotate(-45)")
-      .style("text-anchor", "end");
+    svg.append("g")
+      .attr("transform", `translate(0,${height - margin.bottom})`)
+      .call(d3.axisBottom(x).tickSizeOuter(0));
 
-    svg.append('g').call(yAxis);
+    svg.append("g")
+      .attr("transform", `translate(${margin.left},0)`)
+      .call(d3.axisLeft(y));
 
-    svg.selectAll('.bar')
+    const barGroups = svg.selectAll(".bar-group")
       .data(data)
-      .enter()
-      .append('rect')
-      .attr('x', d => x(d.quarter))
-      .attr('y', d => y(d.acv))
-      .attr('width', x.bandwidth())
-      .attr('height', d => 400 - y(d.acv))
-      .attr('fill', '#69b3a2');
-  }, [data]);
+      .enter().append("g")
+      .attr("class", "bar-group")
+      .attr("transform", d => `translate(${x(d.quarter)},0)`);
+
+    barGroups.append("rect")
+      .attr("x", 0)
+      .attr("y", d => y(d.acv))
+      .attr("width", x.bandwidth())
+      .attr("height", d => y(0) - y(d.acv))
+      .attr("fill", d => color(d.type));
+
+    barGroups.append("text")
+      .attr("x", x.bandwidth() / 2)
+      .attr("y", d => y(d.acv) - 5)
+      .attr("dy", ".75em")
+      .attr("text-anchor", "middle")
+      .text(d => `$${d.acv} (${d.percentage})`)
+      .attr("fill", "black")
+      .style("font-size", "0.75rem"); // Small font size for text inside bars
+  };
 
   return (
-    <svg ref={ref}></svg>
+    <svg ref={chartRef} width="100%" height="400"></svg>
   );
-}
+};
 
 export default BarChart;

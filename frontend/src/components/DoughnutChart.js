@@ -3,48 +3,66 @@ import * as d3 from 'd3';
 import React, { useEffect, useRef } from 'react';
 
 const DoughnutChart = ({ data }) => {
-  const ref = useRef();
+ const chartRef = useRef(null);
 
-  useEffect(() => {
-    const width = 450;
-    const height = 450;
-    const margin = 40;
+ useEffect(() => {
+   if (data.length > 0) {
+     drawChart();
+   }
+ }, [data]);
 
-    const radius = Math.min(width, height) / 2 - margin;
+ const drawChart = () => {
+   const svg = d3.select(chartRef.current);
+   svg.selectAll("*").remove();
 
-    const svg = d3.select(ref.current)
-      .attr('width', width)
-      .attr('height', height)
-      .append('g')
-      .attr('transform', `translate(${width / 2},${height / 2})`);
+   const width = svg.node().clientWidth;
+   const height = svg.node().clientHeight;
+   const radius = Math.min(width, height) / 2;
 
-    const color = d3.scaleOrdinal()
-      .domain(data.map(d => d.type))
-      .range(d3.schemeSet2);
+   const color = d3.scaleOrdinal()
+     .domain(data.map(d => d.type))
+     .range(['#00bcd4', '#ff9800']);
 
-    const pie = d3.pie()
-      .value(d => d.value);
+   const arc = d3.arc()
+     .outerRadius(radius - 10)
+     .innerRadius(radius - 70);
 
-    const data_ready = pie(data);
+   const pie = d3.pie()
+     .sort(null)
+     .value(d => d.value);
 
-    svg
-      .selectAll('whatever')
-      .data(data_ready)
-      .enter()
-      .append('path')
-      .attr('d', d3.arc()
-        .innerRadius(100)
-        .outerRadius(radius)
-      )
-      .attr('fill', d => color(d.data.type))
-      .attr('stroke', 'black')
-      .style('stroke-width', '2px')
-      .style('opacity', 0.7);
-  }, [data]);
+   const g = svg.append("g")
+     .attr("transform", `translate(${width / 2},${height / 2})`);
 
-  return (
-    <svg ref={ref}></svg>
-  );
-}
+   const arcs = g.selectAll(".arc")
+     .data(pie(data))
+     .enter().append("g")
+     .attr("class", "arc");
+
+   arcs.append("path")
+     .attr("d", arc)
+     .attr("fill", d => color(d.data.type));
+
+   const total = data.reduce((acc, cur) => acc + cur.value, 0);
+
+   g.append("text")
+     .attr("text-anchor", "middle")
+     .attr("dy", "-1em") // Move the text above the value
+     .text("Total")
+     .style("font-size", "1rem")
+     .attr("fill", "black");
+
+   g.append("text")
+     .attr("text-anchor", "middle")
+     .attr("dy", "0.35em")
+     .text(`$${total.toFixed(2)}K`) // Add 'K' after the value
+     .style("font-size", "1.5rem")
+     .attr("fill", "black");
+ };
+
+ return (
+   <svg ref={chartRef} width="100%" height="400"></svg>
+ );
+};
 
 export default DoughnutChart;

@@ -33,7 +33,8 @@ const Dashboard = () => {
     quarter: d.closed_fiscal_quarter,
     acv: d.acv,
     opps: d.count,
-    percentage: (d.acv / data.customerType.reduce((acc, cur) => acc + cur.acv, 0) * 100).toFixed(2) + '%'
+    percentage: (d.acv / data.customerType.reduce((acc, cur) => acc + cur.acv, 0) * 100).toFixed(2) + '%',
+    type: d.Cust_Type
   }));
 
   const doughnutData = [
@@ -42,56 +43,31 @@ const Dashboard = () => {
   ];
 
   return (
-    <Container>
-      <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <Typography variant="h4" gutterBottom>
-            Won ACV mix by Cust Type
-          </Typography>
-        </Grid>
+    <Container maxWidth="xl" sx={{ height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: '16px' }}>
+      <Typography variant="h4" gutterBottom align="center">
+        Won ACV Mix by Cust Type
+      </Typography>
+      <Grid container spacing={2} sx={{ flex: '1 0 auto' }}>
         <Grid item xs={12} md={8}>
-          <Card>
+          <Card sx={{ height: '100%' }}>
             <CardContent>
               <BarChart data={barData} />
             </CardContent>
           </Card>
         </Grid>
         <Grid item xs={12} md={4}>
-          <Card>
+          <Card sx={{ height: '100%' }}>
             <CardContent>
               <DoughnutChart data={doughnutData} />
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12}>
-          <Card>
-            <CardContent>
-              <DataTable data={data.customerType} columns={customerTypeColumns} />
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12}>
-          <Card>
-            <CardContent>
-              <DataTable data={data.accountIndustry} columns={accountIndustryColumns} />
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12}>
-          <Card>
-            <CardContent>
-              <DataTable data={data.team} columns={teamColumns} />
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12}>
-          <Card>
-            <CardContent>
-              <DataTable data={data.productLine} columns={productLineColumns} />
-            </CardContent>
-          </Card>
-        </Grid>
       </Grid>
+      <Card sx={{ marginTop: 2, flex: '1 0 auto' }}>
+        <CardContent>
+          <DataTable data={data.customerType} columns={customerTypeColumns} />
+        </CardContent>
+      </Card>
     </Container>
   );
 }
